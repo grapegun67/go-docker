@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-    file1, _ := os.Create("test.txt")
+    file1, _ := os.Create("/tmp/test.txt")
     defer file1.Close()
     fmt.Fprint(file1, 1, 1.1, "Success")
 }
