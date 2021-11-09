@@ -1,0 +1,29 @@
+#1. ubuntu 설치
+FROM golang:latest
+MAINTAINER gun@gun.com
+RUN apt-get -y update
+
+#2. protoc 설치(에러가 난다면 protoc 버전을 최신으로 해줄 것)
+RUN curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v3.19.1/protoc-3.19.1-linux-x86_64.zip
+RUN apt-get install -y unzip
+RUN unzip protoc-3.19.1-linux-x86_64.zip -d $HOME/.local
+#RUN export PATH=$PATH:$HOME/.local/bin
+ENV PATH $HOME/.local/bin:$PATH
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+#RUN export PATH=$PATH:$(go env GOPATH)/bin
+ENV PATH $(go env GOPATH)/bin:$PATH
+
+#3. go 소스 실행
+RUN apt-get install -y git
+RUN git clone https://github.com/grapegun67/gotest.git
+RUN mkdir /usr/local/go/src/test_proto
+RUN mkdir /usr/local/go/src/test_proto/test_proto
+RUN mkdir /usr/local/go/src/test_proto/client
+RUN mkdir /usr/local/go/src/test_proto/server
+RUN mv gotest/test.proto /usr/local/go/src/test_proto/test_proto
+RUN mv gotest/server.go /usr/local/go/src/test_proto/server
+RUN mv gotest/client.go /usr/local/go/src/test_proto/client
+	#생각보다 경로 설정이 잘 되지 않음. 그래서 protoc 같은 경우도 절대 경로를 써줌.
+RUN $HOME/.local/bin/protoc --go_out=.  --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative --proto_path=/usr/local/go/src/test_proto/test_proto test.proto	
+
