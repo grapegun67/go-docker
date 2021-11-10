@@ -8,6 +8,7 @@ RUN curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v3.19
 RUN apt-get install -y unzip
 RUN unzip protoc-3.19.1-linux-x86_64.zip -d $HOME/.local
 RUN export PATH=$PATH:$HOME/.local/bin
+RUN go install golang.org/x/tools/gopls@latest  #main package를 찾지 못하는 경우는 이 tool을 깔아야함
 RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 RUN export PATH=$PATH:$(go env GOPATH)/bin
@@ -17,4 +18,3 @@ RUN apt-get install -y git
 RUN git clone https://github.com/grapegun67/gotest.git
 RUN chmod 777 gotest/client.go
 CMD gotest/client.go
-
