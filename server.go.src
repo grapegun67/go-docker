@@ -6,6 +6,7 @@ import (
         "net"
         "context"
         "google.golang.org/grpc"
+        "google.golang.org/grpc/reflection"
         pb "test_proto/test_proto"
 )
 
@@ -31,6 +32,8 @@ func main() {
         s := grpc.NewServer()
         pb.RegisterTestProtoServer(s, &testServer{})
         log.Printf("server listen %v", l.Addr())
+        
+        reflection.Register(s)
         if e = s.Serve(l); e != nil {
                 log.Fatalf("Failed to Server()")
         }
